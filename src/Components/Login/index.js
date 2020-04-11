@@ -20,6 +20,7 @@ import {
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser, loadUsers, LoadedUsers } from "../../reducers/UserReducer";
+import { login } from "../../reducers/authReducer";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -46,7 +47,10 @@ const useStyles = makeStyles((theme) => ({
 const Login = (props) => {
   const classes = useStyles();
   const Users = useSelector(LoadedUsers);
+  console.log(useSelector((state) => state));
+  const dispatch = useDispatch();
   const [dropdownValue, setDropdownValue] = useState("");
+
   const [avatar, setAvatar] = useState("");
   useEffect(() => {
     console.log(Users);
@@ -61,6 +65,11 @@ const Login = (props) => {
       setDropdownValue("");
       setAvatar("");
     }
+  };
+
+  const handleLogin = (e) => {
+    console.log(e);
+    dispatch(login(Users.users[dropdownValue]));
   };
 
   return (
@@ -103,6 +112,7 @@ const Login = (props) => {
             variant='contained'
             color='primary'
             className={classes.submit}
+            onClick={(e) => handleLogin(e)}
           >
             Sign In
           </Button>

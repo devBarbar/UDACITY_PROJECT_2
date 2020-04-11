@@ -1,22 +1,20 @@
 import React, { useEffect } from "react";
 
-import  Login  from "../../Components/Login";
+import Login from "../../Components/Login";
 
 import { useDispatch } from "react-redux";
 import { loadUser, loadUsers } from "../../reducers/UserReducer";
 
-
 const LoginPage = (props) => {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadUsers())
-  },[])
+    dispatch(loadUsers());
+  }, []);
 
   return (
-   <>
-   <Login></Login>
-   </>
+    <>
+      <Login></Login>
+    </>
   );
 };
 
