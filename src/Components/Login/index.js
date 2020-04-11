@@ -1,76 +1,129 @@
-import React from "react";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+
+import Container from "@material-ui/core/Container";
+import Avatar from "@material-ui/core/Avatar";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+
+import Grid from "@material-ui/core/Grid";
 import {
-  FormControl,
-  InputLabel,
+  CssBaseline,
   Select,
   MenuItem,
+  InputLabel,
+  Typography,
+  FormControl,
+  FormControlLabel,
+  Checkbox,
   Button,
+  Link,
 } from "@material-ui/core";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser, loadUsers, LoadedUsers } from "../../reducers/UserReducer";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
   paper: {
-    padding: theme.spacing(2),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%",
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
   },
 }));
 
-export const Login = () => {
+const Login = (props) => {
   const classes = useStyles();
+  const Users = useSelector(LoadedUsers);
+  const [dropdownValue, setDropdownValue] = useState("");
+  const [avatar, setAvatar] = useState("");
+  useEffect(() => {
+    console.log(Users);
+  }, [Users]);
+
+  const handleUserChange = (e) => {
+    let id = e.target.value;
+    if (id) {
+      setDropdownValue(id);
+      setAvatar(Users.users[id].avatarURL);
+    } else {
+      setDropdownValue("");
+      setAvatar("");
+    }
+  };
+
   return (
-    <Paper className={classes.paper}>
-      <Grid
-        container
-        spacing={3}
-        direction="column"
-        justify="center"
-        alignItems="center"
-      >
-        <Typography variant="h4" gutterBottom>
-          Login
+    <Container className={classes.root} maxWidth='xs'>
+      <CssBaseline></CssBaseline>
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          {avatar ? <img src={avatar}></img> : <LockOutlinedIcon />}
+        </Avatar>
+        <Typography component='h1' variant='h5'>
+          Sign in
         </Typography>
-        <Grid
-          container
-          item
-          xs
-          spacing={3}
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >
-          <FormControl
-            size="medium"
-            variant="outlined"
-            className={classes.formControl}
+        <FormControl className={classes.form}>
+          <InputLabel id='demo-simple-select-outlined-label'>Users</InputLabel>
+          <Select
+            labelId='demo-simple-select-outlined-label'
+            id='demo-simple-select-outlined'
+            value={dropdownValue}
+            onChange={(e) => handleUserChange(e)}
+            label='Users'
           >
-            <InputLabel id="user-label"> User</InputLabel>
-            <Select labelId="user-label" value="test" label="User">
-              <MenuItem value="User1">User1</MenuItem>
-              <MenuItem value="User2">User2</MenuItem>
-              <MenuItem value="User3">User3</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs spacing={3}>
-          <Button variant="outlined" color="primary">
-            {" "}
-            Login
+            <MenuItem value=''>
+              <em>None</em>
+            </MenuItem>
+            {Users.users &&
+              Object.entries(Users.users).map((value) => (
+                <MenuItem key={value[1]["id"]} value={value[1]["id"]}>
+                  {value[1]["id"]}
+                </MenuItem>
+              ))}
+          </Select>
+
+          <FormControlLabel
+            control={<Checkbox value='remember' color='primary' />}
+            label='Remember me'
+          />
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            color='primary'
+            className={classes.submit}
+          >
+            Sign In
           </Button>
-        </Grid>
-      </Grid>
-    </Paper>
+          <Grid container>
+            <Grid item xs>
+              <Link href='#' variant='body2'>
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href='#' variant='body2'>
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </FormControl>
+      </div>
+    </Container>
   );
 };
+
+Login.propTypes = {};
 
 export default Login;
