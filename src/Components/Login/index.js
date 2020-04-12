@@ -20,7 +20,13 @@ import {
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser, loadUsers, LoadedUsers } from "../../reducers/UserReducer";
-import { login } from "../../reducers/authReducer";
+import {
+  login,
+  successLoggedInSelector,
+  doLogin,
+  isLoggedInSelector,
+} from "../../reducers/authReducer";
+import { Redirect } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -44,10 +50,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const RedirectIfAuth = ({ isAuth, children }) => {
+  return isAuth ? (
+    <Redirect
+      to={{
+        pathname: "/",
+      }}
+    ></Redirect>
+  ) : (
+    children
+  );
+};
+
 const Login = (props) => {
   const classes = useStyles();
   const Users = useSelector(LoadedUsers);
-  console.log(useSelector((state) => state));
+  const isAuth = useSelector(isLoggedInSelector);
   const dispatch = useDispatch();
   const [dropdownValue, setDropdownValue] = useState("");
 
@@ -69,68 +87,72 @@ const Login = (props) => {
 
   const handleLogin = (e) => {
     console.log(e);
-    dispatch(login(Users.users[dropdownValue]));
+    dispatch(doLogin(Users.users[dropdownValue]));
   };
 
   return (
-    <Container className={classes.root} maxWidth='xs'>
-      <CssBaseline></CssBaseline>
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          {avatar ? <img src={avatar}></img> : <LockOutlinedIcon />}
-        </Avatar>
-        <Typography component='h1' variant='h5'>
-          Sign in
-        </Typography>
-        <FormControl className={classes.form}>
-          <InputLabel id='demo-simple-select-outlined-label'>Users</InputLabel>
-          <Select
-            labelId='demo-simple-select-outlined-label'
-            id='demo-simple-select-outlined'
-            value={dropdownValue}
-            onChange={(e) => handleUserChange(e)}
-            label='Users'
-          >
-            <MenuItem value=''>
-              <em>None</em>
-            </MenuItem>
-            {Users.users &&
-              Object.entries(Users.users).map((value) => (
-                <MenuItem key={value[1]["id"]} value={value[1]["id"]}>
-                  {value[1]["id"]}
-                </MenuItem>
-              ))}
-          </Select>
+    <RedirectIfAuth isAuth={isAuth}>
+      <Container className={classes.root} maxWidth='xs'>
+        <CssBaseline></CssBaseline>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            {avatar ? <img src={avatar}></img> : <LockOutlinedIcon />}
+          </Avatar>
+          <Typography component='h1' variant='h5'>
+            Sign in
+          </Typography>
+          <FormControl className={classes.form}>
+            <InputLabel id='demo-simple-select-outlined-label'>
+              Users
+            </InputLabel>
+            <Select
+              labelId='demo-simple-select-outlined-label'
+              id='demo-simple-select-outlined'
+              value={dropdownValue}
+              onChange={(e) => handleUserChange(e)}
+              label='Users'
+            >
+              <MenuItem value=''>
+                <em>None</em>
+              </MenuItem>
+              {Users.users &&
+                Object.entries(Users.users).map((value) => (
+                  <MenuItem key={value[1]["id"]} value={value[1]["id"]}>
+                    {value[1]["id"]}
+                  </MenuItem>
+                ))}
+            </Select>
 
-          <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
-            label='Remember me'
-          />
-          <Button
-            type='submit'
-            fullWidth
-            variant='contained'
-            color='primary'
-            className={classes.submit}
-            onClick={(e) => handleLogin(e)}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href='#' variant='body2'>
-                Forgot password?
-              </Link>
+            <FormControlLabel
+              control={<Checkbox value='remember' color='primary' />}
+              label='Remember me'
+            />
+            <Button
+              type='submit'
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+              onClick={(e) => handleLogin(e)}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href='#' variant='body2'>
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href='#' variant='body2'>
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Link href='#' variant='body2'>
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </FormControl>
-      </div>
-    </Container>
+          </FormControl>
+        </div>
+      </Container>
+    </RedirectIfAuth>
   );
 };
 

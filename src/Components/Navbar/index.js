@@ -9,7 +9,11 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { useSelector, useDispatch } from "react-redux";
-import { isLoggedInSelector, logout } from "../../reducers/authReducer";
+import {
+  isLoggedInSelector,
+  logout,
+  loggedInUserSelector,
+} from "../../reducers/authReducer";
 import { useHistory } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,13 +28,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Navbar = () => {
-  let history = useHistory();
+const LoginOutButton = ({ isAuth }) => {
   const dispatch = useDispatch();
-  const isAuth = useSelector(isLoggedInSelector);
-
-  const classes = useStyles();
-
+  let history = useHistory();
   const handleLogout = (e) => {
     dispatch(logout());
     history.push("/login");
@@ -39,6 +39,24 @@ const Navbar = () => {
   const handleLogin = (e) => {
     history.push("/login");
   };
+  return isAuth ? (
+    <Button onClick={() => handleLogout()}>Logout</Button>
+  ) : (
+    <Button onClick={handleLogin}>Login</Button>
+  );
+};
+
+const User = ({ user, className }) => {
+  return (
+    user && <Typography className={className}>Hello, {user.name}</Typography>
+  );
+};
+
+const Navbar = () => {
+  const isAuth = useSelector(isLoggedInSelector);
+  const user = useSelector(loggedInUserSelector);
+  const classes = useStyles();
+
   return (
     <AppBar className={classes.root} position='static'>
       <Toolbar>
@@ -48,11 +66,8 @@ const Navbar = () => {
         <Typography className={classes.title} variant='h6'>
           Would you Rather
         </Typography>
-        {isAuth ? (
-          <Button onClick={() => handleLogout()}>Logout</Button>
-        ) : (
-          <Button onClick={handleLogin}>Login</Button>
-        )}
+        <User user={user} className={classes.menuButton}></User>
+        <LoginOutButton isAuth={isAuth}></LoginOutButton>
       </Toolbar>
     </AppBar>
   );

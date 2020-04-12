@@ -3,12 +3,14 @@ import thunk from "redux-thunk";
 
 import userReducer from "../reducers/UserReducer";
 import authReducer from "../reducers/authReducer";
+import questionsReducer from "../reducers/questionsReducer";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import { persistReducer } from "redux-persist";
 
 const reducers = combineReducers({
   users: userReducer,
   auth: authReducer,
+  questions: questionsReducer
 });
 
 const persistConfig = {
