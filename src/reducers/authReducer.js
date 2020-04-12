@@ -10,7 +10,6 @@ export const authSlice = createSlice({
   },
   reducers: {
     login: (state, action) => {
-      console.log(action);
       state.isAuth = true;
       state.user = action.payload;
     },
@@ -26,7 +25,7 @@ export const authSlice = createSlice({
     },
     logout: (state, action) => {
       state.isAuth = false;
-      state.user = null;
+      state = undefined;
     },
   },
 });
@@ -53,5 +52,7 @@ export const isLoggedInSelector = (state) => state.auth.isAuth;
 export const successLoggedInSelector = (state) => state.auth.success;
 
 export const loggedInUserSelector = (state) => state.auth.user;
+
+export const getAnswerById = (state) => (id) => state.auth.user.answers[id];
 
 export default authSlice.reducer;

@@ -70,9 +70,6 @@ const Login = (props) => {
   const [dropdownValue, setDropdownValue] = useState("");
 
   const [avatar, setAvatar] = useState("");
-  useEffect(() => {
-    console.log(Users);
-  }, [Users]);
 
   const handleUserChange = (e) => {
     let id = e.target.value;
@@ -86,7 +83,6 @@ const Login = (props) => {
   };
 
   const handleLogin = (e) => {
-    console.log(e);
     dispatch(doLogin(Users.users[dropdownValue]));
   };
 

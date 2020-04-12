@@ -5,7 +5,10 @@ export const userSlice = createSlice({
   initialState: {
     isLoading: false,
     error: false,
-    questions: null,
+    questions: {
+      answeredQuestions: null,
+      unansweredQuestions: null,
+    },
   },
   reducers: {
     startLoadQuestions: (state) => {
@@ -19,8 +22,8 @@ export const userSlice = createSlice({
       state.isLoading = false;
     },
     loadQuestions: (state, action) => {
-      state.questions = action.payload;
-      console.log(state);
+      state.questions.answeredQuestions = action.payload.answered;
+      state.questions.unansweredQuestions = action.payload.unanswered;
     },
   },
 });
@@ -31,13 +34,33 @@ export const {
   errorLoadQuestions,
 } = userSlice.actions;
 
-export const getQuestions = () => async (dispatch) => {
+export const getQuestions = () => async (dispatch, getState) => {
   dispatch(startLoadQuestions());
+  const state = getState();
   try {
-    const questions = await _getQuestions();
-    dispatch(loadQuestions(questions));
+    let questions = await _getQuestions();
+
+    const answered_questions_ids = Object.keys(state.auth.user.answers);
+    let unanswered_questions = null;
+    let answered_questions = answered_questions_ids.map((value) => {
+      return questions[value];
+    });
+    unanswered_questions = Object.keys(questions)
+      .filter((question_id) => {
+        return typeof state.auth.user.answers[question_id] === "undefined";
+      })
+      .map((value) => {
+        return questions[value];
+      });
+
+    dispatch(
+      loadQuestions({
+        answered: answered_questions,
+        unanswered: unanswered_questions,
+      })
+    );
     dispatch(successLoadQuestions());
-  } catch {
+  } catch (error) {
     dispatch(errorLoadQuestions());
   }
 };
@@ -45,3 +68,9 @@ export const getQuestions = () => async (dispatch) => {
 export default userSlice.reducer;
 
 export const LoadedQuestionsSelector = (state) => state.questions;
+export const getQuestionByID = (state) => (id) =>
+  state.questions.questions.answeredQuestions
+    .concat(state.questions.questions.unansweredQuestions)
+    .filter((value) => {
+      return value["id"] === id;
+    });

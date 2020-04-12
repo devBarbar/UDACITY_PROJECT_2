@@ -20,7 +20,6 @@ export const userSlice = createSlice({
     },
     loadUser: (state, action) => {
       state.users = action.payload;
-      console.log(state);
     },
   },
 });
@@ -45,3 +44,5 @@ export const loadUsers = () => async (dispatch) => {
 export default userSlice.reducer;
 
 export const LoadedUsers = (state) => state.users;
+
+export const getUserByID = (state) => (id) => state.users.users[id];

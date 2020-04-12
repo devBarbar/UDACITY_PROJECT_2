@@ -16,6 +16,8 @@ import {
   getQuestions,
   LoadedQuestionsSelector,
 } from "../../reducers/questionsReducer";
+import { LoadedUsers } from "../../reducers/UserReducer";
+import { loggedInUserSelector } from "../../reducers/authReducer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,10 +40,11 @@ function Polls() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const LoadedQuestions = useSelector(LoadedQuestionsSelector);
+  const Users = useSelector(loggedInUserSelector);
   useEffect(() => {
     dispatch(getQuestions());
   }, []);
-  console.log(LoadedQuestions);
+
   const handleChange = (event, newValue) => {
     setChecked(newValue);
   };
@@ -69,12 +72,12 @@ function Polls() {
         <Paper className={classes.paper}>
           <Tabs
             value={checked}
-            indicateColor='primary'
+            indicatorColor='primary'
             textColor='primary'
             onChange={handleChange}
           >
-            <Tab label='Answered'></Tab>
             <Tab label='Unanswered'></Tab>
+            <Tab label='Answered'></Tab>
           </Tabs>
         </Paper>
       </Grid>
@@ -87,7 +90,15 @@ function Polls() {
         item
         xs={12}
       >
-        <PollList></PollList>
+        {checked === 1 ? (
+          <PollList
+            questions={LoadedQuestions.questions.answeredQuestions}
+          ></PollList>
+        ) : (
+          <PollList
+            questions={LoadedQuestions.questions.unansweredQuestions}
+          ></PollList>
+        )}
       </Grid>
     </Grid>
   );

@@ -9,6 +9,7 @@ import { Box } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import PrivateRoute from "./Components/privateRoute";
 import Polls from "./Components/Polls";
+import DetailPage from "./Pages/Details";
 function App() {
   return (
     <Router>
@@ -20,6 +21,9 @@ function App() {
         <Route path='/login'>
           <LoginPage></LoginPage>
         </Route>
+        <PrivateRoute path='/questions/:id'>
+          <DetailPage></DetailPage>
+        </PrivateRoute>
       </Box>
     </Router>
   );
